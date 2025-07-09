@@ -254,11 +254,11 @@ int main()
             free(buffer);
 
             // Verify CMAC to ensure data integrity and authenticity
-            printf("Verifying CMAC...   ");
+            printf("Verifying CMAC...   \n");
             int verified = verify_cmac(aes_key, ciphertext, ciphertext_len, recvd_cmac);
             if (verified != 1)
             {
-                fprintf(stderr, "CMAC verification failed! Possible tampering attempt!!!\n");
+                fprintf(stderr, /* RED */"\033[1;31mCMAC verification failed! Possible tampering attempt!!!\033[0m\n"/* RESET */);
 #ifdef _WIN32
                 closesocket(client_fd);
 #else
@@ -267,7 +267,7 @@ int main()
                 free(ciphertext);
                 continue;
             }
-            printf("CMAC verification successful!!\n");
+            printf("\033[1;32mCMAC verification successful!!\033[0m\n");
 
             /* Decrypt the ciphertext */
             unsigned char *decrypted = (unsigned char *)calloc(sizeof(sensor_data_t), sizeof(unsigned char));
