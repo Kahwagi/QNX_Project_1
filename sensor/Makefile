@@ -10,9 +10,9 @@ CC = qcc
 LD = qcc
 
 # Target platform
-TARGET = -Vgcc_ntox86_64
+#TARGET = -Vgcc_ntox86_64
 #TARGET = -Vgcc_ntoarmv7le
-#TARGET = -Vgcc_ntoaarch64le
+TARGET = -Vgcc_ntoaarch64le
 
 # Compile and link flags
 CFLAGS += $(TARGET) $(DEBUG) -Wall 
@@ -40,7 +40,7 @@ sensor_server: sensor_server.o
 	$(LD) $(LDFLAGS) -lsocket -lssl -lcrypto -o sensor_server sensor_server.o
 
 #tcp_receiver: tcp_receiver.o
-#	$(LD) $(LDFLAGS) -lsocket -o tcp_receiver tcp_receiver.o
+#	$(LD) $(LDFLAGS) -lsocket -lssl -lcrypto -o tcp_receiver tcp_receiver.o
 
 sensor_client: sensor_client.o
 	$(LD) $(LDFLAGS) -o sensor_client sensor_client.o
