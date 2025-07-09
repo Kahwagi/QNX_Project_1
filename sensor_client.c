@@ -1,9 +1,19 @@
 /**
-  This is a sensor simulator app running as a QNX Process
-  it simulates different sensor values like temperature, speed, or GPS.
-  Periodically generates values (e.g., every 1s).
-  Sends data via QNX message passing or shared memory to another process.
+ * @file sensor_client.c
+ * @brief Sensor Simulator Client
+ * @details
+ *  This client simulates a sensor that generates random sensor data
+ *  and sends it to a server process using QNX message passing.
+ *  The sensor data includes temperature, speed, and GPS coordinates.
+ *  The client connects to the server using a name service and sends data periodically every 1 second.
+ *  The server is expected to be running and registered with the name SENSOR_NAME.
+ *  The client will retry connecting to the server for up to 60 seconds.
+ *  If the connection fails after 60 seconds, it will exit with an error.
+ * @note
+   The client uses the QNX message passing API to send structured sensor data defined in sensor_def.h.
+* @author mohamed.elkahwagy@seitech-solutions.com
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

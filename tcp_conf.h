@@ -6,7 +6,7 @@
 
 
 // Configurable remote server
-#define REMOTE_IP   "192.168.75.129"  // target TCP server IP
-#define TCP_PORT 12345
+#define REMOTE_IP   "192.168.25.29"  // target TCP server IP
+#define TCP_PORT 8000
 
 #endif // TCP_CONF_H

@@ -2,6 +2,9 @@
  * header file containing data types and macros used by sensor application
  * 
  * */
+#ifndef SENSOR_DEF_H
+#define SENSOR_DEF_H
+
 #include <sys/iomsg.h>
 
  #define SENSOR_NAME "sensor"
@@ -18,3 +21,5 @@ typedef struct {
     uint16_t type;
     sensor_data_t data;
 } message_t;
+
+#endif // SENSOR_DEF_H
