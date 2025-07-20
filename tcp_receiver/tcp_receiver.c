@@ -202,17 +202,14 @@ int main()
         if (buffer == NULL)
         {
             perror("malloc failed for buffer");
-#ifdef _WIN32
+            #ifdef _WIN32
             closesocket(client_fd);
-        bytes_received = recv(client_fd, buffer, BUFFER_SIZE, 0);
-        if (bytes_received > 0) {
-            printf("Received %d bytes from client\n", bytes_received);
-        } else {
-            fprintf(stderr, "recv returned %d bytes (error or connection closed)\n", bytes_received);
-        }
-#endif
+            #else
+            close(client_fd);
+            #endif
             continue;
         }
+
         // Clear buffer before receiving data
         memset(buffer, 0, BUFFER_SIZE);
 
@@ -222,16 +219,16 @@ int main()
 
         if (bytes_received > 0)
         {
-#if ENABLE_DECRYPTION
+            #if ENABLE_DECRYPTION
             // Check if received data is large enough to contain CMAC
             if (bytes_received < CMAC_SIZE)
             {
                 fprintf(stderr, "Received data too short for CMAC\n");
-#ifdef _WIN32
+                #ifdef _WIN32
                 closesocket(client_fd);
-#else
+                #else
                 close(client_fd);
-#endif
+                #endif
                 free(buffer);
                 continue;
             }
@@ -259,11 +256,11 @@ int main()
             if (verified != 1)
             {
                 fprintf(stderr, /* RED */"\033[1;31mCMAC verification failed! Possible tampering attempt!!!\033[0m\n"/* RESET */);
-#ifdef _WIN32
+                #ifdef _WIN32
                 closesocket(client_fd);
-#else
+                #else
                 close(client_fd);
-#endif
+                #endif
                 free(ciphertext);
                 continue;
             }
@@ -303,16 +300,17 @@ int main()
             // Copy decrypted data into sensor_data structure
             memcpy(&sensor_data, (sensor_data_t *)decrypted, decrypted_len);
             free(decrypted);
-#else
+            #else
             // If not decrypting, expect raw sensor_data_t structure
             if (bytes_received != sizeof(sensor_data_t))
             {
                 fprintf(stderr, "Received data size mismatch: expected %zu, got %d\n", sizeof(sensor_data_t), bytes_received);
                 closesocket(client_fd);
+                free(buffer);
                 continue;
             }
             memcpy(&sensor_data, buffer, sizeof(sensor_data_t));
-#endif
+            #endif
             // Print decrypted sensor data
             printf("Decrypted Sensor Data:: ");
             printf("Temperature: %.1f°C, Speed: %.1f km/h, GPS: (%.4f, %.4f)\n",
@@ -322,24 +320,26 @@ int main()
         else
         {
             perror("recv");
+            fprintf(stderr, "recv returned %d bytes (error or connection closed)\n", bytes_received);
+            free(buffer);
         }
 
-#ifdef _WIN32
+        #ifdef _WIN32
         closesocket(client_fd); // close connection after one message
-#else
+        #else
         close(client_fd); // close connection after one message
-#endif
+        #endif
     }
 
-#ifdef _WIN32
+    #ifdef _WIN32
     closesocket(server_fd);
-#else
+    #else
     close(server_fd);
-#endif
+    #endif
 
-#ifdef _WIN32
+    #ifdef _WIN32
     WSACleanup();
-#endif
+    #endif
 
     return 0;
 }
